@@ -13,6 +13,8 @@ tags:
   description: "인증할때 쓰이는 API들"
 - name: "Proxmox"
   description: "서버에 있는 정보를 불려올때 쓰는 API"
+- name: "Board"
+  description: "계시판 관련 API"
 schemes:
 - "https"
 paths:
@@ -93,6 +95,96 @@ paths:
           description: "계정또는 비번이 틀리면 오류코드 반환. 오류코드: 51102"
           schema:
             $ref: "#/definitions/same"
+
+  /logout:
+    post:
+      tags:
+      - "Auth"
+      summary: 유저 로그아웃
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Logout:
+                    type: boolean
+        '502':
+          description: Logout failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Error:
+                    type: string
+
+  /department:
+    post:
+      tags:
+      - "Auth"
+      summary: JWT관한 처리 API
+      parameters:
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+            enum: [infoUser, token_fresh]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Operation successful
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Error:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Code:
+                    type: string
+                  Error:
+                    type: string
+
 securityDefinitions:
   api_key:
     type: "apiKey"
